@@ -39,10 +39,10 @@ WiFi config -> WiFi station<p>
 MQTT Explorer http://mqtt-explorer.com/ <p>
 mostquitto - UFSC <p>
 Broker: 150.162.29.25 <p>
-User: alunos
-Pwd: iFsC@2018
-Topic - esp_02 xx
-Publicando um Valor
+User: alunos <p>
+Pwd: iFsC@2018 <p>
+Topic - esp_02 xx <p>
+Publicando um Valor <p>
 esp_02/atuador_0 -> Broker -> Application
 
 ### References:
