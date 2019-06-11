@@ -41,7 +41,8 @@ mostquitto - UFSC <p>
 Broker: 150.162.29.25 <p>
 User: alunos <p>
 Pwd: iFsC@2018 <p>
-Topic - esp_02 xx <p>
+Port: 1883 <p>
+Topic - esp_02 xx (leonardo) <p>
 Publicando um Valor <p>
 esp_02/atuador_0 -> Broker -> Application
 
