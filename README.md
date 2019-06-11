@@ -1,20 +1,32 @@
 # Project_MCC_I
-Project_MCC_I - Change this name after
+Project_MCC_I - Change this name after<p>
+Suggest: Temperature Chamber
+
+## ESP-02 MODBUS-MQTT
+SSID: EOR_...<p>
+Password: esp-open-rtos<p>
+IP: 172.16.0.1<p>
+WiFi config -> WiFi station<p>
 
 ## Main Functions
 
-  
-  
+## Hardware
+- Humidity and Temperature Sensor SHT21
+- Temperature Sensor with NTC
+- Cooler
+
 ### Features:
-- Temperature
-- Humidity
-- Ambient Light
-- RGB Color Sensing
-- Gesture Detection
+- Temperature Read
+- Humidity Read
 - Display datas on LCD
- 
+- Control overheat by a Cooler
+- Control underheat by a Peltier
+- <s>Ambient Light</s>
+- <s>RGB Color Sensing</s>
+- <s>Gesture Detection</s>
+
 ### How it works:
-- Switch the Display's data for each parameter
+- Switch the Display's between date and data
 - Detect if someone is in front of the Display and Stop the Finite State Machine (FSM)
 - Each gesture will be a command
 
