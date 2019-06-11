@@ -35,7 +35,15 @@ WiFi config -> WiFi station<p>
 - Send the command to the MQTT Broker (for show act on a Web Application or Change something)
 - Turn On/Off 4 different LEDs
 
-
+## Notes
+MQTT Explorer http://mqtt-explorer.com/ <p>
+mostquitto - UFSC <p>
+Broker: 150.162.29.25 <p>
+User: alunos
+Pwd: ifsc@2018
+Topic - esp_02 xx
+Publicando um Valor
+esp_02/atuador_0 -> Broker -> Application
 
 ### References:
 https://community.createlabz.com/knowledgebase/1-2-switching-leds-using-gesture-sensor-ap05-9960-module/
