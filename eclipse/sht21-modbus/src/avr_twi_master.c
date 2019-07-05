@@ -229,6 +229,6 @@ ISR(TWI_vect)
       TWCR = (1<<TWEN)|                                 // Enable TWI-interface and release TWI pins
              (0<<TWIE)|(0<<TWINT)|                      // Disable Interrupt
              (0<<TWEA)|(0<<TWSTA)|(0<<TWSTO)|           // No Signal requests
-             (0<<TWWC);                                 //
+             (0<<TWWC);
   }
 }

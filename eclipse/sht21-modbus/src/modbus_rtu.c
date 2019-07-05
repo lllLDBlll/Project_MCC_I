@@ -16,8 +16,12 @@
 #include "../lib/avr_gpio.h"
 #include "../lib/lcd.h"
 
-#define DEBUG 1
 
+#include "../lib/sht21.h"
+#include "../lib/avr_twi_master.h"
+
+#define DEBUG 1
+/*
 typedef struct frame{
 	u8 addr;
 	u8 cmd;
@@ -25,19 +29,20 @@ typedef struct frame{
 	u8 data[2];							//Big Endian
 	u8 crc[2];							//Big Endian
 };
-
+ */
 void modbus_rtu_init(){
-	/* Inicializa hardware da USART */
-	USART_Init(BAUD);
+	FILE *lcd_stream;
 	lcd_stream = inic_stream();
-	/* Inicializa hardware do LCD */
-	inic_LCD_4bits();
+	/* Inicializa hardware da USART */
+	USART_Init(BAUD); //<---------- ERROR
 	fprintf(lcd_stream,"%s", "MODBUS RTU INIT!");
 	_delay_ms(1000);
 }
 
 //Just One Register not Multiply
 u16 modbus_rtu_read(u16 reg_dest){
+	FILE *lcd_stream;
+	lcd_stream = inic_stream();
 	u8 pkg[8], rx_pkg[16], i;
 	u16 crc;
 
@@ -53,18 +58,21 @@ u16 modbus_rtu_read(u16 reg_dest){
 	pkg[6] = crc >> 8;
 	pkg[7] = crc & 0xff;
 
+	cli();
 	for (i=0; i < 8; i++)
 		USART_tx(pkg[i]);
 
 	for (i=0; i < 8;i++)
 		rx_pkg[i] = USART_rx();
+	sei();
 
 	//checkError();
 	for(uint8_t i=0; i<8; i++){
-		if(pkg[i] != rx_pkg[i]);
+		//if(pkg[i] != rx_pkg[i])
 		//Mamamia
 	}
 #if DEBUG
+	cmd_LCD(0x80,0);
 	cmd_LCD(0x01,0); //Clear display screen
 	for(uint8_t i=0; i<6; i++){
 		fprintf(lcd_stream,"%x ", rx_pkg[i]);
@@ -77,6 +85,8 @@ u16 modbus_rtu_read(u16 reg_dest){
 
 //<addr><cmd><reg><data><crc>
 void modbus_rtu_write(u16 reg, u16 data){
+	FILE *lcd_stream;
+	lcd_stream = inic_stream();
 	u8 pkg[8], rx_pkg[8], i;
 	u16 crc;
 
@@ -93,31 +103,28 @@ void modbus_rtu_write(u16 reg, u16 data){
 	pkg[6] = crc >> 8;
 	pkg[7] = crc & 0xff;
 
+	cli();
 	for (i=0; i < 8; i++)
 		USART_tx(pkg[i]);
 
 	for (i=0; i < 8;i++)
 		rx_pkg[i] = USART_rx(); //Resposta deve ser Igual ao Enviado
+	sei();
 
 	//checkError();
 	for(uint8_t i=0; i<8; i++){
-		if(pkg[i] != rx_pkg[i]);
+		//if(pkg[i] != rx_pkg[i]);
 		//Mamamia
 	}
+
 #if DEBUG
+	cmd_LCD(0x80,0);
 	cmd_LCD(0x01,0); //Clear display screen
 	for(uint8_t i=0; i<6; i++){
 		fprintf(lcd_stream,"%x ", rx_pkg[i]);
 	}
 	_delay_ms(2000);
 #endif
-}
-
-void nibble_data(uint8_t *data){
-	uint8_t tmp;
-	tmp = data[0];
-	data[0] = data[1];
-	data[1] = tmp;
 }
 
 uint16_t CRC16_2(uint8_t *buf, int len)

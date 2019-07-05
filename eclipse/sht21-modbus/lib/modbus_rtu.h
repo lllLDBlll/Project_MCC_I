@@ -37,9 +37,7 @@
 typedef uint8_t u8;
 typedef uint16_t u16;
 
-typedef struct frame frame_t;
-
-FILE *lcd_stream;
+//typedef struct frame frame_t;
 
 void modbus_rtu_init();
 

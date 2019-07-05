@@ -51,9 +51,9 @@
 /****************************************************************************
   Function definitions
 ****************************************************************************/
-
+//Working just with NO_HOLD_MASTER
 void sht21_init();
 void sht21_write(unsigned char *, unsigned char);
-uint16_t sht21_read(uint8_t reg);
+uint16_t sht21_read(uint8_t );
 
 #endif /* SHT21_H_ */
