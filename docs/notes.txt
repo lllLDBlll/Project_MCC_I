@@ -1,0 +1,35 @@
+Resolutions:
+Relative Humidity - 12bit 0.04 or 8bit
+Temperature: 14bit 0.01 or 12bit
+
+http://www.engbedded.com/fusecalc/
+
+Equations:
+T = -46.85 + 175.72*(St/2^16)
+RHw = -6 +125*(Srh/2^16)
+
+23330
+
+15.70*C
+
+Supply: 3.0V (DAC?)
+Capacitor 100nF
+
+Important Sections:
+2.6 Wiring Considerations and Signal Integrity
+
+5.1 Start Up Sensor
+5.3 Sending a Command
+The sensor indicates the proper reception of a byte by pulling
+the SDA pin low (ACK bit) after the falling edge of the 8th
+SCL clock.
+
+Table 7 - Maximum values for wait
+
+The soft reset takes less than 15ms.
+
+‘00’ 12 bit 14 bit Default
+
+5.7 CRC Checksum
+
+6 Conversion of Signal Output
