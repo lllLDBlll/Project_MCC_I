@@ -17,25 +17,25 @@
   Bit and byte definitions
  ****************************************************************************/
 #define SHT21_WRITE 0x80 // SHT21 I2C Address 1000 0000 - 0x80 + Write
-#define SHT21_READ 0x81 // SHT21 I2C Address 1000 0001 - 0x81 + Read
+#define SHT21_READ 0x81 // SHT21 I2C Address 1000 0001 - 0x80 + Read
 
 /*             Basic commands set table
 +-------------------------+----------------+-----------+
 |		 Command		  |	    Comment    |   Code    |
 +-------------------------+----------------+-----------+
-|  Trigger T measurement  |   hold master  | 1110’0011 |
+|  Trigger T measurement  |   hold master  | 1110ï¿½0011 |
 +-------------------------+----------------+-----------+
-|  Trigger RH measurement |   hold master  | 1110’0101 |
+|  Trigger RH measurement |   hold master  | 1110ï¿½0101 |
 +-------------------------+----------------+-----------+
-|  Trigger T measurement  | no hold master | 1111’0011 |
+|  Trigger T measurement  | no hold master | 1111ï¿½0011 |
 +-------------------------+----------------+-----------+
-|  Trigger RH measurement | no hold master | 1111’0101 |
+|  Trigger RH measurement | no hold master | 1111ï¿½0101 |
 +-------------------------+----------------+-----------+
-|  Write user register    |				   | 1110’0110 |
+|  Write user register    |				   | 1110ï¿½0110 |
 +-------------------------+----------------+-----------+
-|  Read user register     |				   | 1110’0111 |
+|  Read user register     |				   | 1110ï¿½0111 |
 +-------------------------+----------------+-----------+
-|	  Soft reset          |				   | 1111’1110 |
+|	  Soft reset          |				   | 1111ï¿½1110 |
 +-------------------------+----------------+-----------+
  */
 

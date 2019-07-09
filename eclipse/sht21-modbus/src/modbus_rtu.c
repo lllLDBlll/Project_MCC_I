@@ -16,10 +16,7 @@
 #include "../lib/avr_gpio.h"
 #include "../lib/lcd.h"
 
-#include "../lib/sht21.h"
-#include "../lib/avr_twi_master.h"
-
-#define DEBUG 1
+#define DEBUG 0
 /*
 typedef struct frame{
 	u8 addr;
@@ -38,7 +35,7 @@ void modbus_rtu_init(){
 	_delay_ms(1000);
 }
 
-//Just One Register not Multiply
+//Just One Register no Multiplies
 u16 modbus_rtu_read(u16 reg_dest){
 	FILE *lcd_stream;
 	lcd_stream = inic_stream();
@@ -49,32 +46,30 @@ u16 modbus_rtu_read(u16 reg_dest){
 	pkg[1] = R_CMD;
 	pkg[2] = reg_dest >> 8;
 	pkg[3] = reg_dest & 0xff;
-	pkg[4] = pkg[2];
-	pkg[5] = pkg[3];
+	pkg[4] = 0;
+	pkg[5] = 1;
 
 	crc = CRC16_2(pkg,6);
 
 	pkg[6] = crc >> 8;
 	pkg[7] = crc & 0xff;
 
-	cli();
 	for (i=0; i < 8; i++)
 		USART_tx(pkg[i]);
 
-	for (i=0; i < 8;i++)
+	for (i=0; i < 8; i++)
 		rx_pkg[i] = USART_rx();
-	sei();
 
 	//checkError();
-	crc_t = CRC16_2(rx_pkg,6);
-	crc = rx_pkg[6]<<8 | rx_pkg[7];
-	if(crc_t != crc){
+	//crc_t = CRC16_2(rx_pkg,6);
+	//crc = rx_pkg[6]<<8 | rx_pkg[7];
+	/*if(crc_t != crc){
 		cmd_LCD(0x80,0);
 		cmd_LCD(0x01,0); //Clear display screen
 		fprintf(lcd_stream,"%s ", "CRC ERROR!");
 		_delay_ms(2000);
 	}
-
+*/
 #if DEBUG
 	cmd_LCD(0x80,0);
 	cmd_LCD(0x01,0); //Clear display screen
@@ -83,7 +78,7 @@ u16 modbus_rtu_read(u16 reg_dest){
 	}
 	_delay_ms(2000);
 #endif
-	return (rx_pkg[4]<<8 | rx_pkg[5]);
+	return (rx_pkg[4]<<8) | rx_pkg[5];
 }
 
 
@@ -107,24 +102,22 @@ void modbus_rtu_write(u16 reg, u16 data){
 	pkg[6] = crc >> 8;
 	pkg[7] = crc & 0xff;
 
-	cli();
 	for (i=0; i < 8; i++)
 		USART_tx(pkg[i]);
 
-	for (i=0; i < 8;i++)
+	for (i=0; i < 8; i++)
 		rx_pkg[i] = USART_rx(); //Resposta deve ser Igual ao Enviado
-	sei();
 
 	//checkError();
-	crc_t = CRC16_2(rx_pkg,6);
-	crc = rx_pkg[6]<<8 | rx_pkg[7];
-	if(crc_t != crc){
+	//crc_t = CRC16_2(rx_pkg,6);
+	//crc = rx_pkg[6]<<8 | rx_pkg[7];
+	/*if(crc_t != crc){
 		cmd_LCD(0x80,0);
 		cmd_LCD(0x01,0); //Clear display screen
 		fprintf(lcd_stream,"%s ", "CRC ERROR!");
 		_delay_ms(2000);
 	}
-
+*/
 #if DEBUG
 	cmd_LCD(0x80,0);
 	cmd_LCD(0x01,0); //Clear display screen

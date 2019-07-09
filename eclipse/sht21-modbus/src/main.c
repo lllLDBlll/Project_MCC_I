@@ -31,7 +31,6 @@
 #define COOLER 	1
 #define SHT21 	1
 
-uint8_t I2C_buf[10]={0};
 float tc, rh;
 
 #if COOLER
@@ -65,7 +64,7 @@ inline void set_dutty(uint8_t dutty){
 	if (dutty <= TIMER_2->OCRA)
 		TIMER_2->OCRB = dutty;
 }
-*/
+ */
 #endif
 
 int main(void){
@@ -75,30 +74,11 @@ int main(void){
 	inic_LCD_4bits(); //Just inic in the main
 
 #if MQTT
-	uint16_t data = 0;
-	uint8_t buff[2];
 	modbus_rtu_init();
-	sht21_init();
-	cmd_LCD(0x01,0);
-	cmd_LCD(0x80,0);
-	fprintf(lcd_stream,"%s", "START!");
-	_delay_ms(1000);
 #endif
 
 #if SHT21
-	/* Obtem o stream de depuração */
-	//FILE *debug = get_usart_stream();
-
-	/* Inicializa hardware da USART */
-	//USART_Init(B9600);
-
-	/* Inicializa modo lÃ­der */
-	//TWI_Master_Initialise();
-	//sei();
-
-	/* Mensagem incial: terminal do Proteus
-	 * utiliza final de linha com '\r' */
-	//sht21_init();
+	sht21_init();
 #endif
 
 #if COOLER
@@ -112,6 +92,11 @@ int main(void){
 	//sei();
 #endif
 
+	cmd_LCD(0x01,0);
+	cmd_LCD(0x80,0);
+	fprintf(lcd_stream,"%s", "START!");
+	_delay_ms(1000);
+
 	while(1){
 #if SHT21
 		//uint16_t temp_value = sht21_read(T_NO_HOLD); //I2C_buf[1]<<8 | I2C_buf[2]>>2;
@@ -122,32 +107,34 @@ int main(void){
 		char buffer[4];
 		tc = sht21_get_temp();
 		dtostrf(tc,5,2,buffer);
-		fprintf(lcd_stream, "TC = %s *C \n\r", buffer);
+		fprintf(lcd_stream, "TC = %s *C", buffer);
 		cmd_LCD(0xC0,0);
 		rh = sht21_get_hum();
 		dtostrf(rh,5,2,buffer);
-		fprintf(lcd_stream, "RH = %s %%  \n\r", buffer);
+		fprintf(lcd_stream, "RH = %s %%", buffer);
 		_delay_ms(2000);
 #endif
 
 #if MQTT
 		modbus_rtu_write(ADDR_S_0, tc);
 		modbus_rtu_write(ADDR_S_1, rh);
-		data++;
 		u16 ret = modbus_rtu_read(ADDR_A_0);
+
+#if COOLER
+		if(ret){
+			GPIO_SetBit(DC_PORT,DC_PIN);
+		}else{
+			GPIO_ClrBit(DC_PORT,DC_PIN);
+		}
+		//valor_pwm = 180;
+		//set_dutty(valor_pwm);
+		//_delay_ms(1000);
+#endif
+
 		cmd_LCD(0x01,0);
 		cmd_LCD(0x80,0);
 		fprintf(lcd_stream,"ATUADOR_0: %d", ret);
 		_delay_ms(2000);
-#endif
-
-#if COOLER
-		if(ret)
-			GPIO_SetBit(DC_PORT,DC_PIN);
-		GPIO_ClrBit(DC_PORT,DC_PIN);
-		//valor_pwm = 180;
-		//set_dutty(valor_pwm);
-		//_delay_ms(1000);
 #endif
 	}
 }
