@@ -1,6 +1,6 @@
 # Project_MCC_I
 Project_MCC_I - Change this name after<p>
-Suggest: Temperature Chamber
+Target: Temperature Chamber
 
 ## ESP-02 MODBUS-MQTT
 SSID: EOR_...<p>
@@ -12,7 +12,7 @@ WiFi config -> WiFi station<p>
 
 ## Hardware
 - Humidity and Temperature Sensor SHT21
-- Temperature Sensor with NTC
+- <s>Redundance Temperature with NTC</s>
 - Cooler
 
 ### Features:
@@ -20,20 +20,17 @@ WiFi config -> WiFi station<p>
 - Humidity Read
 - Display datas on LCD
 - Control overheat by a Cooler
-- Control underheat by a Peltier
+- <s>Control underheat by a Peltier</s>
 - <s>Ambient Light</s>
 - <s>RGB Color Sensing</s>
 - <s>Gesture Detection</s>
 
 ### How it works:
-- Switch the Display's between date and data
-- Detect if someone is in front of the Display and Stop the Finite State Machine (FSM)
-- Each gesture will be a command
+- Switch Display between SHT21 datas and MQTT publishes
+- <s>Detect if someone is in front of the Display and Stop the Finite State Machine (FSM)</s>
 
 ### Commands:
-- Servo motors will rotate 180° horizontal and vertical
-- Send the command to the MQTT Broker (for show act on a Web Application or Change something)
-- Turn On/Off 4 different LEDs
+- Turn On/Off Cooler
 
 ## Notes
 MQTT Explorer http://mqtt-explorer.com/ <p>
