@@ -23,7 +23,7 @@ void sht21_init(){
 	/* Inicializa modo líder */
 	TWI_Master_Initialise();
 	sei();//<---------- ERROR
-
+	_delay_ms(100);
 	buff[0] = SHT21_WRITE;
 	buff[1] = SOFT_RESET;
 	TWI_Start_Transceiver_With_Data(buff, 2); //Send message to transceiver
@@ -39,6 +39,7 @@ void sht21_init(){
 
 uint16_t sht21_read(uint8_t reg){
 	uint8_t buff[4];
+	uint16_t result;
 	buff[0] = SHT21_WRITE;
 	buff[1] = reg;
 	TWI_Start_Transceiver_With_Data(buff, 2);
@@ -48,9 +49,21 @@ uint16_t sht21_read(uint8_t reg){
 	buff[0] = SHT21_READ;
 	TWI_Start_Transceiver_With_Data(buff, 4);
 	TWI_Get_Data_From_Transceiver(buff, 4);
-	if(reg == RH_NO_HOLD)
-		return buff[1]<<8 | buff[2]>>4;
-	return buff[1]<<8 | buff[2]>>2;
+	result = buff[1]<<8 | buff[2];
+	result &= 0xFFFC;
+	return result;
+}
+
+float sht21_get_temp(void){
+	uint16_t temp_value = sht21_read(T_NO_HOLD);
+	float tc = -46.85 + (175.72 / 65536.0) * temp_value;
+	return tc;
+}
+
+float sht21_get_hum(void){
+	uint16_t hum_value = sht21_read(RH_NO_HOLD);
+	float rh = -6 + (125.0 / 65536.0) * hum_value;
+	return rh;
 }
 
 /*

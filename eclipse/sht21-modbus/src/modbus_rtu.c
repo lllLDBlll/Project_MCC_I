@@ -16,7 +16,6 @@
 #include "../lib/avr_gpio.h"
 #include "../lib/lcd.h"
 
-
 #include "../lib/sht21.h"
 #include "../lib/avr_twi_master.h"
 
@@ -44,7 +43,7 @@ u16 modbus_rtu_read(u16 reg_dest){
 	FILE *lcd_stream;
 	lcd_stream = inic_stream();
 	u8 pkg[8], rx_pkg[16], i;
-	u16 crc;
+	u16 crc, crc_t;
 
 	pkg[0] = ESP_ADDR;
 	pkg[1] = R_CMD;
@@ -67,10 +66,15 @@ u16 modbus_rtu_read(u16 reg_dest){
 	sei();
 
 	//checkError();
-	for(uint8_t i=0; i<8; i++){
-		//if(pkg[i] != rx_pkg[i])
-		//Mamamia
+	crc_t = CRC16_2(rx_pkg,6);
+	crc = rx_pkg[6]<<8 | rx_pkg[7];
+	if(crc_t != crc){
+		cmd_LCD(0x80,0);
+		cmd_LCD(0x01,0); //Clear display screen
+		fprintf(lcd_stream,"%s ", "CRC ERROR!");
+		_delay_ms(2000);
 	}
+
 #if DEBUG
 	cmd_LCD(0x80,0);
 	cmd_LCD(0x01,0); //Clear display screen
@@ -88,7 +92,7 @@ void modbus_rtu_write(u16 reg, u16 data){
 	FILE *lcd_stream;
 	lcd_stream = inic_stream();
 	u8 pkg[8], rx_pkg[8], i;
-	u16 crc;
+	u16 crc, crc_t;
 
 	//Monta o pacote
 	pkg[0] = ESP_ADDR;
@@ -112,9 +116,13 @@ void modbus_rtu_write(u16 reg, u16 data){
 	sei();
 
 	//checkError();
-	for(uint8_t i=0; i<8; i++){
-		//if(pkg[i] != rx_pkg[i]);
-		//Mamamia
+	crc_t = CRC16_2(rx_pkg,6);
+	crc = rx_pkg[6]<<8 | rx_pkg[7];
+	if(crc_t != crc){
+		cmd_LCD(0x80,0);
+		cmd_LCD(0x01,0); //Clear display screen
+		fprintf(lcd_stream,"%s ", "CRC ERROR!");
+		_delay_ms(2000);
 	}
 
 #if DEBUG

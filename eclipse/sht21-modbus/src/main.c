@@ -24,12 +24,12 @@
 #include "../lib/avr_twi_master.h"
 
 #define F_CPU 16000000UL //Define CPU Clock
-#define HIGH 1
-#define LOW 0
+#define HIGH 	1
+#define LOW 	0
 
-#define MQTT 1	//test MQTT by ESP01
-#define COOLER 0
-#define SHT21 1
+#define MQTT 	1	//test MQTT by ESP01
+#define COOLER 	1
+#define SHT21 	1
 
 uint8_t I2C_buf[10]={0};
 float tc, rh;
@@ -65,7 +65,7 @@ inline void set_dutty(uint8_t dutty){
 	if (dutty <= TIMER_2->OCRA)
 		TIMER_2->OCRB = dutty;
 }
- */
+*/
 #endif
 
 int main(void){
@@ -87,20 +87,23 @@ int main(void){
 
 #if SHT21
 	/* Obtem o stream de depuração */
-	FILE *debug = get_usart_stream();
+	//FILE *debug = get_usart_stream();
 
 	/* Inicializa hardware da USART */
-	USART_Init(B9600);
+	//USART_Init(B9600);
+
+	/* Inicializa modo lÃ­der */
+	//TWI_Master_Initialise();
+	//sei();
 
 	/* Mensagem incial: terminal do Proteus
 	 * utiliza final de linha com '\r' */
-
-	sht21_init();
+	//sht21_init();
 #endif
 
 #if COOLER
-	uint8_t valor_pwm = 1;
-	DDRD = SET(DC_PIN); //set as output pin cooler
+	//uint8_t valor_pwm = 1;
+	DDRD = SET_BIT(DDRD, DC_PIN); //set as output pin cooler
 
 	/* Configura timer em modo PWM */
 	//timer2_pwm_hardware_init();
@@ -111,20 +114,20 @@ int main(void){
 
 	while(1){
 #if SHT21
-		uint16_t temp_value = sht21_read(T_NO_HOLD); //I2C_buf[1]<<8 | I2C_buf[2]>>2;
-		tc = -46.85 + (175.72 / 65536.0) * temp_value;
-		char buffer1[4];
-		dtostrf(tc,5,2,buffer1);
-		//fprintf(debug, "TC = %s *C \n\r", buffer1);
-
-		char buffer2[4];
-		uint16_t hum_value = sht21_read(RH_NO_HOLD);//I2C_buf[1]<<8 | I2C_buf[2]>>2;
-		rh = -6 + (125.0 / 65536.0) * hum_value;
-		dtostrf(rh,5,2,buffer2);
-		//fprintf(debug, "RH = %s %%  \n\r", buffer2);
-
-		//fprintf(debug, "%s\n\r","----------");
-		_delay_ms(1000);
+		//uint16_t temp_value = sht21_read(T_NO_HOLD); //I2C_buf[1]<<8 | I2C_buf[2]>>2;
+		//tc = -46.85 + (175.72 / 65536.0) * temp_value;
+		//uint16_t hum_value = sht21_read(RH_NO_HOLD);//I2C_buf[1]<<8 | I2C_buf[2]>>2;
+		//rh = -6 + (125.0 / 65536.0) * hum_value;
+		cmd_LCD(0x80,0);
+		char buffer[4];
+		tc = sht21_get_temp();
+		dtostrf(tc,5,2,buffer);
+		fprintf(lcd_stream, "TC = %s *C \n\r", buffer);
+		cmd_LCD(0xC0,0);
+		rh = sht21_get_hum();
+		dtostrf(rh,5,2,buffer);
+		fprintf(lcd_stream, "RH = %s %%  \n\r", buffer);
+		_delay_ms(2000);
 #endif
 
 #if MQTT
@@ -134,16 +137,16 @@ int main(void){
 		u16 ret = modbus_rtu_read(ADDR_A_0);
 		cmd_LCD(0x01,0);
 		cmd_LCD(0x80,0);
-		fprintf(lcd_stream,"%d", ret);
-		_delay_ms(1000);
+		fprintf(lcd_stream,"ATUADOR_0: %d", ret);
+		_delay_ms(2000);
 #endif
+
 #if COOLER
 		if(ret)
-			PORTD = SET(DC_PIN);
-		CLR_BIT(PORTD, DC_PIN);
+			GPIO_SetBit(DC_PORT,DC_PIN);
+		GPIO_ClrBit(DC_PORT,DC_PIN);
 		//valor_pwm = 180;
 		//set_dutty(valor_pwm);
-		//valor_pwm+=10;
 		//_delay_ms(1000);
 #endif
 	}
